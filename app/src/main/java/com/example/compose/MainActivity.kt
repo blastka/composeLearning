@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,10 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.compose.ui.theme.Item
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,10 +43,13 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun modif() {
-    LazyColumn(modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally){
-        itemsIndexed(listOf("1","2","3","4")){ index, item ->
-            Text("$index")
+    LazyColumn(modifier = Modifier.fillMaxWidth()
+        .padding(4.dp)
+    ) {
+        itemsIndexed(listOf(Cats("Kolya", R.drawable.image),
+            Cats("Misha", R.drawable.image),
+            Cats("Oleg", R.drawable.image))){ index, item ->
+            Item(item)
         }
     }
 }

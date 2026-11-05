@@ -1,8 +1,10 @@
 [versions]
 # Плагины
 composeBom = "2026.09.00"
+kotlin = "2.4.21"
 # Основные зависимости
 coreKtx = "1.19.1"
+kotlinxSerializationJson = "1.12.0"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 material3 = "1.4.0"
@@ -37,7 +39,9 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 [plugins]
-android-application = { id = "com.android.application", version = "9.5.0" } # укажи свою версию AGP
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.4.21" } # укажи свою версию Kotlin
+android-application = { id = "com.android.application", version = "9.5.0" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

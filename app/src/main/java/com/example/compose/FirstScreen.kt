@@ -12,13 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.ui.theme.ComposeTheme
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -29,13 +34,17 @@ fun FirstScreen(
         mutableIntStateOf(1)
     }
 
-    LaunchedEffect(dialogueId) {
-        delay(2000.milliseconds)
-        println("Реплика $dialogueId готова")
+    var isTransitioning by remember {
+        mutableStateOf(false)
     }
 
-    Scaffold { innerPadding ->
+    var transitionJob by remember {
+        mutableStateOf<Job?>(null)
+    }
 
+    val scope = rememberCoroutineScope()
+
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -45,10 +54,36 @@ fun FirstScreen(
         ) {
             DialogueScreen(
                 dialogueId = dialogueId,
+                isTransitioning = isTransitioning,
                 onNextDialogue = {
-                    dialogueId++
+                    if (!isTransitioning) {
+                        isTransitioning = true
+
+                        transitionJob = scope.launch {
+                            try {
+                                delay(500L.milliseconds)
+                                dialogueId++
+                            } finally {
+                                if (transitionJob ==
+                                    currentCoroutineContext()[Job]
+                                ) {
+                                    isTransitioning = false
+                                    transitionJob = null
+                                }
+                            }
+                        }
+                    }
                 }
             )
+
+            Button(
+                enabled = isTransitioning,
+                onClick = {
+                    transitionJob?.cancel()
+                }
+            ) {
+                Text("Отменить переход")
+            }
 
             Button(
                 onClick = onClickButton
@@ -61,6 +96,7 @@ fun FirstScreen(
 @Composable
 fun DialogueScreen(
     dialogueId: Int,
+    isTransitioning: Boolean = false,
     onNextDialogue: () -> Unit
 ) {
     Column(
@@ -76,6 +112,7 @@ fun DialogueScreen(
         )
 
         Button(
+            enabled = !isTransitioning,
             onClick = onNextDialogue
         ) {
             Text("Переход к следующей реплике")
